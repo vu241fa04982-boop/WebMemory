@@ -1,0 +1,6 @@
+{
+  "name": "WebMemory",
+  "description": "An interactive visual memory testing platform that measures recall of website layouts, colors, content, spatial relationships, and visual details.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

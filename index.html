@@ -1,0 +1,1100 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebMemory — Test Your Visual Memory</title>
+    <meta name="description" content="An interactive visual memory testing platform that measures recall of website layouts, colors, content, spatial relationships, and visual details." />
+    <meta property="og:title" content="WebMemory — Test Your Visual Memory" />
+    <meta property="og:description" content="Remember websites. Recall details. Discover how accurately you remember what you see." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <!-- Ambient Particle Canvas -->
+    <canvas id="ambient-canvas"></canvas>
+
+    <!-- Header Navigation (3-Zone Contract) -->
+    <header class="header-nav">
+      <!-- Zone 1: Single Brand Lockup -->
+      <a class="brand-link" onclick="navigateToView('home')">
+        <div class="brand-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </div>
+        <span class="brand-text">Web<span>Memory</span></span>
+      </a>
+
+      <!-- Zone 2: Navigation Links (Requirement 1: Nav does not auto-start tests) -->
+      <ul class="nav-links">
+        <li><button class="nav-item-btn active" data-view="home" onclick="navigateToView('home')">Home</button></li>
+        <li><button class="nav-item-btn" data-view="tests" onclick="navigateToView('tests')">Tests</button></li>
+        <li><button class="nav-item-btn" data-view="themes" onclick="navigateToView('themes')">Themes</button></li>
+        <li><button class="nav-item-btn" data-view="modes" onclick="navigateToView('modes')">Advanced Modes</button></li>
+        <li><button class="nav-item-btn" data-view="progress" onclick="navigateToView('progress')">Progress</button></li>
+      </ul>
+
+      <!-- Zone 3: Actions -->
+      <div class="nav-actions">
+        <button class="nav-icon-btn" id="sound-toggle-btn" title="Toggle Sound Cues" onclick="toggleSound()">
+          <span id="sound-toggle-icon">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+          </span>
+        </button>
+
+        <button class="nav-icon-btn" id="theme-toggle-btn" title="Toggle Dark/Light Mode" onclick="toggleTheme()">
+          <span id="theme-toggle-icon">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          </span>
+        </button>
+
+        <button class="nav-icon-btn" title="App Settings" onclick="openModal('settings-modal')">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+
+        <button class="nav-cta-btn" onclick="navigateToView('tests')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          <span>Start Test</span>
+        </button>
+
+        <button class="nav-icon-btn mobile-menu-btn" id="mobile-menu-toggle-btn" title="Toggle Navigation Menu" aria-label="Toggle Navigation Menu" onclick="toggleMobileMenu()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="app-container">
+      
+      <!-- ==================================================
+           VIEW 1: HOME PAGE
+           ================================================== -->
+      <section class="view-section active-view" id="view-home">
+        <!-- Hero Area -->
+        <div class="home-hero">
+          <div class="hero-badge">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            <span>Interactive Visual Cognition Platform</span>
+          </div>
+          
+          <h1 class="hero-title">Test Your Visual Memory</h1>
+          <p class="hero-subtitle">Remember websites. Recall details. Discover how accurately you remember what you see.</p>
+          <p class="hero-description">
+            WebMemory is an interactive visual memory testing platform that measures how accurately you can recall website layouts, colors, content, spatial relationships, and visual details after a short exposure.
+          </p>
+
+          <!-- Main CTA & Secondary Options -->
+          <div class="hero-actions">
+            <button class="btn btn-primary" onclick="navigateToView('tests')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              <span>Start Memory Test</span>
+            </button>
+            <button class="btn btn-secondary" onclick="navigateToView('tests')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <span>Choose Difficulty</span>
+            </button>
+            <button class="btn btn-secondary" onclick="navigateToView('progress')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+              <span>View Progress</span>
+            </button>
+          </div>
+
+          <!-- Six Feature Indicators -->
+          <div class="features-grid">
+            <div class="feature-pill">
+              <div class="feature-icon-wrap">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </div>
+              <span class="feature-name">Visual Recall</span>
+              <span class="feature-sub">Forms & shapes</span>
+            </div>
+
+            <div class="feature-pill">
+              <div class="feature-icon-wrap">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+              </div>
+              <span class="feature-name">Layout Recall</span>
+              <span class="feature-sub">Grids & positioning</span>
+            </div>
+
+            <div class="feature-pill">
+              <div class="feature-icon-wrap">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="m4.93 4.93 4.24 4.24"></path><path d="m14.83 9.17 4.24-4.24"></path><path d="m14.83 14.83 4.24 4.24"></path><path d="m9.17 14.83-4.24 4.24"></path></svg>
+              </div>
+              <span class="feature-name">Color Recall</span>
+              <span class="feature-sub">Accents & CTAs</span>
+            </div>
+
+            <div class="feature-pill">
+              <div class="feature-icon-wrap">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line><line x1="10" y1="3" x2="8" y2="21"></line><line x1="16" y1="3" x2="14" y2="21"></line></svg>
+              </div>
+              <span class="feature-name">Content Recall</span>
+              <span class="feature-sub">Headings & copy</span>
+            </div>
+
+            <div class="feature-pill">
+              <div class="feature-icon-wrap">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              </div>
+              <span class="feature-name">Attention</span>
+              <span class="feature-sub">Selective focus</span>
+            </div>
+
+            <div class="feature-pill">
+              <div class="feature-icon-wrap">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              </div>
+              <span class="feature-name">Difference Detection</span>
+              <span class="feature-sub">State shifts</span>
+            </div>
+          </div>
+
+          <!-- Animated Statistics Banner -->
+          <div class="stats-banner">
+            <div class="stat-item">
+              <span class="stat-value tabular-nums" id="stat-total-tests">0</span>
+              <span class="stat-label">Tests Completed</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value tabular-nums" id="stat-best-score">0%</span>
+              <span class="stat-label">Best Score</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value tabular-nums" id="stat-avg-score">0%</span>
+              <span class="stat-label">Average Recall</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Difficulty Selection Section on Home -->
+        <div class="section-header" id="difficulty-section">
+          <h2 class="section-title">Select Challenge Difficulty</h2>
+          <p class="section-desc">Adjust the exposure duration based on your visual retention goals.</p>
+        </div>
+
+        <div class="difficulty-grid">
+          <!-- Low -->
+          <div class="diff-card" data-diff="low" onclick="selectDifficulty('low')">
+            <div class="diff-badge-indicator">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <div class="diff-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+            </div>
+            <h3 class="diff-name">LOW</h3>
+            <div class="diff-time tabular-nums">20s</div>
+            <p class="diff-desc">Longer viewing time. Generous exposure time for learning layout structures, navigation details, and prominent content zones.</p>
+          </div>
+
+          <!-- Medium (Default) -->
+          <div class="diff-card selected" data-diff="medium" onclick="selectDifficulty('medium')">
+            <div class="diff-badge-indicator">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <div class="diff-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+            </div>
+            <h3 class="diff-name">MEDIUM</h3>
+            <div class="diff-time tabular-nums">12s</div>
+            <p class="diff-desc">Medium viewing time. Standard balanced challenge testing selective attention, color accents, and overall visual layout memory.</p>
+          </div>
+
+          <!-- High -->
+          <div class="diff-card" data-diff="high" onclick="selectDifficulty('high')">
+            <div class="diff-badge-indicator">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <div class="diff-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            </div>
+            <h3 class="diff-name">HIGH</h3>
+            <div class="diff-time tabular-nums">7s</div>
+            <p class="diff-desc">Shorter viewing time. Rapid flash challenge demanding high-speed perceptual encoding and instant spatial recognition.</p>
+          </div>
+        </div>
+
+        <div class="start-test-action-wrap">
+          <button class="btn btn-primary" onclick="startMemoryTestWithCurrentDifficulty()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            <span>Start Memory Test</span>
+          </button>
+        </div>
+
+        <!-- Section: Website Themes Preview -->
+        <div class="section-header">
+          <h2 class="section-title">Multiple Website Themes</h2>
+          <p class="section-desc">Practice visual recall across 6 realistic modern website industries.</p>
+        </div>
+
+        <div class="themes-grid">
+          <!-- E-commerce -->
+          <div class="theme-card">
+            <div class="theme-preview-box">
+              <svg width="160" height="100" viewBox="0 0 220 180" fill="none">
+                <rect x="40" y="30" width="140" height="120" rx="16" fill="rgba(255,255,255,0.03)" stroke="#00E5FF" stroke-width="2"/>
+                <circle cx="110" cy="75" r="32" fill="#00E5FF" fill-opacity="0.15" stroke="#00E5FF" stroke-width="2"/>
+                <path d="M100 70 L110 82 L125 66" stroke="#00E5FF" stroke-width="3" stroke-linecap="round"/>
+                <rect x="65" y="120" width="90" height="10" rx="5" fill="#00E5FF" fill-opacity="0.3"/>
+              </svg>
+            </div>
+            <div class="theme-card-body">
+              <h3 class="theme-card-title">E-commerce</h3>
+              <p class="theme-card-desc">Hardware stores, product showcases, pricing cards, and checkout action buttons.</p>
+              <button class="btn btn-secondary btn-sm" onclick="practiceSpecificTheme('ecommerce')">Practice E-commerce</button>
+            </div>
+          </div>
+
+          <!-- Travel -->
+          <div class="theme-card">
+            <div class="theme-preview-box">
+              <svg width="160" height="100" viewBox="0 0 220 180" fill="none">
+                <circle cx="110" cy="90" r="60" fill="rgba(255,255,255,0.02)" stroke="#7C3AED" stroke-width="1.5" stroke-dasharray="4 4"/>
+                <path d="M60 135 L95 85 L120 115 L145 75 L175 135 Z" fill="#7C3AED" fill-opacity="0.25" stroke="#7C3AED" stroke-width="2"/>
+                <circle cx="155" cy="55" r="14" fill="#F59E0B" fill-opacity="0.7"/>
+              </svg>
+            </div>
+            <div class="theme-card-body">
+              <h3 class="theme-card-title">Travel</h3>
+              <p class="theme-card-desc">Bespoke expeditions, alpine journeys, reservation CTAs, and destination highlights.</p>
+              <button class="btn btn-secondary btn-sm" onclick="practiceSpecificTheme('travel')">Practice Travel</button>
+            </div>
+          </div>
+
+          <!-- Portfolio -->
+          <div class="theme-card">
+            <div class="theme-preview-box">
+              <svg width="160" height="100" viewBox="0 0 220 180" fill="none">
+                <rect x="35" y="25" width="90" height="80" rx="12" fill="#00E5FF" fill-opacity="0.2" stroke="#00E5FF" stroke-width="2"/>
+                <rect x="95" y="70" width="90" height="80" rx="12" fill="#7C3AED" fill-opacity="0.25" stroke="#A78BFA" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="theme-card-body">
+              <h3 class="theme-card-title">Portfolio</h3>
+              <p class="theme-card-desc">Digital design agencies, spatial architecture projects, and typography systems.</p>
+              <button class="btn btn-secondary btn-sm" onclick="practiceSpecificTheme('portfolio')">Practice Portfolio</button>
+            </div>
+          </div>
+
+          <!-- Food -->
+          <div class="theme-card">
+            <div class="theme-preview-box">
+              <svg width="160" height="100" viewBox="0 0 220 180" fill="none">
+                <circle cx="110" cy="90" r="55" fill="rgba(255,255,255,0.04)" stroke="#22C55E" stroke-width="2"/>
+                <circle cx="110" cy="90" r="10" fill="#F59E0B"/>
+              </svg>
+            </div>
+            <div class="theme-card-body">
+              <h3 class="theme-card-title">Food & Culinary</h3>
+              <p class="theme-card-desc">Farm-to-table gastronomy, artisanal hearth tasting menus, and culinary cards.</p>
+              <button class="btn btn-secondary btn-sm" onclick="practiceSpecificTheme('food')">Practice Food</button>
+            </div>
+          </div>
+
+          <!-- Dashboard -->
+          <div class="theme-card">
+            <div class="theme-preview-box">
+              <svg width="160" height="100" viewBox="0 0 220 180" fill="none">
+                <rect x="30" y="30" width="160" height="120" rx="10" fill="rgba(0,0,0,0.3)" stroke="#00E5FF" stroke-width="1.5"/>
+                <path d="M45 120 L75 95 L105 105 L135 70 L165 85" stroke="#00E5FF" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="theme-card-body">
+              <h3 class="theme-card-title">SaaS Dashboard</h3>
+              <p class="theme-card-desc">Cloud infrastructure telemetry, sub-second latency analytics, and metrics.</p>
+              <button class="btn btn-secondary btn-sm" onclick="practiceSpecificTheme('dashboard')">Practice Dashboard</button>
+            </div>
+          </div>
+
+          <!-- Education -->
+          <div class="theme-card">
+            <div class="theme-preview-box">
+              <svg width="160" height="100" viewBox="0 0 220 180" fill="none">
+                <path d="M110 40 L175 75 L110 110 L45 75 Z" fill="#7C3AED" fill-opacity="0.25" stroke="#7C3AED" stroke-width="2"/>
+                <path d="M70 90 V125 C70 140 150 140 150 125 V90" stroke="#7C3AED" stroke-width="2" fill="none"/>
+              </svg>
+            </div>
+            <div class="theme-card-body">
+              <h3 class="theme-card-title">Education</h3>
+              <p class="theme-card-desc">STEM interactive labs, self-paced courses, and systems curriculums.</p>
+              <button class="btn btn-secondary btn-sm" onclick="practiceSpecificTheme('education')">Practice Education</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Advanced Modes Preview -->
+        <div class="section-header" style="margin-top: 4.5rem;">
+          <h2 class="section-title">Advanced Memory Modes</h2>
+          <p class="section-desc">Challenge specialized visual and spatial cognitive pathways.</p>
+        </div>
+
+        <div class="modes-grid">
+          <div class="mode-card">
+            <div class="mode-card-header">
+              <div class="mode-card-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v1"></path><path d="M18 8h4a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-4"></path><circle cx="8" cy="12" r="2"></circle><circle cx="20" cy="12" r="2"></circle></svg>
+              </div>
+              <h3 class="mode-card-title">Spot the Difference</h3>
+            </div>
+            <p class="mode-card-desc">Compare two website versions side-by-side and quickly identify the single altered visual or layout element.</p>
+            <button class="btn btn-secondary btn-sm" onclick="startDifferenceMode()">Launch Challenge</button>
+          </div>
+
+          <div class="mode-card">
+            <div class="mode-card-header">
+              <div class="mode-card-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+              </div>
+              <h3 class="mode-card-title">Sequence Memory</h3>
+            </div>
+            <p class="mode-card-desc">Memorize the exact order in which interface elements illuminate, then reproduce the sequence accurately.</p>
+            <button class="btn btn-secondary btn-sm" onclick="startSequenceMode()">Launch Challenge</button>
+          </div>
+
+          <div class="mode-card">
+            <div class="mode-card-header">
+              <div class="mode-card-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+              </div>
+              <h3 class="mode-card-title">Attention Challenge</h3>
+            </div>
+            <p class="mode-card-desc">Ultra-fast 5-second exposure challenge testing instant anomaly recognition and missing element detection.</p>
+            <button class="btn btn-secondary btn-sm" onclick="startAttentionMode()">Launch Challenge</button>
+          </div>
+
+          <div class="mode-card">
+            <div class="mode-card-header">
+              <div class="mode-card-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+              </div>
+              <h3 class="mode-card-title">Visual + Content Dual Test</h3>
+            </div>
+            <p class="mode-card-desc">Simultaneously evaluate spatial layout memory and micro-copy reading comprehension under time pressure.</p>
+            <button class="btn btn-secondary btn-sm" onclick="startMemoryTestWithCurrentDifficulty()">Launch Challenge</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================
+           VIEW 2: TESTS / DIFFICULTY SELECTION
+           Requirement 1 & 2: Dedicated Tests View
+           ================================================== -->
+      <section class="view-section" id="view-tests">
+        <div class="section-header" style="margin-top: 1rem;">
+          <h2 class="section-title">Select Challenge Difficulty</h2>
+          <p class="section-desc">Choose your viewing duration to begin the visual memory challenge.</p>
+        </div>
+
+        <div class="difficulty-grid">
+          <!-- Low -->
+          <div class="diff-card" data-diff="low" onclick="selectDifficulty('low')">
+            <div class="diff-badge-indicator">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <div class="diff-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+            </div>
+            <h3 class="diff-name">LOW</h3>
+            <div class="diff-time tabular-nums">20s</div>
+            <p class="diff-desc">Longer viewing time. Generous exposure time for learning layout structures, navigation details, and prominent content zones.</p>
+            <button class="btn btn-primary btn-sm" style="margin-top: 0.75rem; width: 100%;" onclick="event.stopPropagation(); startMemoryTestWithDifficulty('low');">Start Low (20s)</button>
+          </div>
+
+          <!-- Medium (Default) -->
+          <div class="diff-card selected" data-diff="medium" onclick="selectDifficulty('medium')">
+            <div class="diff-badge-indicator">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <div class="diff-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+            </div>
+            <h3 class="diff-name">MEDIUM</h3>
+            <div class="diff-time tabular-nums">12s</div>
+            <p class="diff-desc">Medium viewing time. Standard balanced challenge testing selective attention, color accents, and overall visual layout memory.</p>
+            <button class="btn btn-primary btn-sm" style="margin-top: 0.75rem; width: 100%;" onclick="event.stopPropagation(); startMemoryTestWithDifficulty('medium');">Start Medium (12s)</button>
+          </div>
+
+          <!-- High -->
+          <div class="diff-card" data-diff="high" onclick="selectDifficulty('high')">
+            <div class="diff-badge-indicator">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <div class="diff-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            </div>
+            <h3 class="diff-name">HIGH</h3>
+            <div class="diff-time tabular-nums">7s</div>
+            <p class="diff-desc">Shorter viewing time. Rapid flash challenge demanding high-speed perceptual encoding and instant spatial recognition.</p>
+            <button class="btn btn-primary btn-sm" style="margin-top: 0.75rem; width: 100%;" onclick="event.stopPropagation(); startMemoryTestWithDifficulty('high');">Start High (7s)</button>
+          </div>
+        </div>
+
+        <div class="start-test-action-wrap">
+          <button class="btn btn-primary" id="start-test-diff-btn" onclick="startMemoryTestWithCurrentDifficulty()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            <span>Start Memory Test</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ==================================================
+           VIEW 3: WEBSITE PREVIEW / MEMORY TEST
+           Requirement 3: Study Website with Clear "Remember this webpage!" & Countdown
+           ================================================== -->
+      <section class="view-section" id="view-test-preview">
+        <!-- Sticky Test Top Bar with Live Circular Countdown (No Skip Button) -->
+        <div class="test-top-bar">
+          <div class="test-meta-info">
+            <span class="theme-tag" id="test-theme-tag">E-commerce Website</span>
+            <span aria-hidden="true" style="color: var(--text-muted);">·</span>
+            <span class="diff-tag" id="test-diff-tag">MEDIUM (12s)</span>
+          </div>
+
+          <!-- Circular Countdown Timer -->
+          <div class="countdown-container">
+            <div class="countdown-label">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              <span>Remember this webpage!</span>
+            </div>
+            <div class="countdown-circle-wrap">
+              <svg class="countdown-svg">
+                <circle class="countdown-bg-ring" cx="27" cy="27" r="25"></circle>
+                <circle class="countdown-progress-ring" id="countdown-progress-circle" cx="27" cy="27" r="25"></circle>
+              </svg>
+              <span class="countdown-number tabular-nums" id="countdown-number-val">12</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Realistic Browser Mockup -->
+        <div class="browser-mockup" id="browser-mockup-frame">
+          <div class="browser-header">
+            <div class="browser-dots">
+              <div class="browser-dot red"></div>
+              <div class="browser-dot yellow"></div>
+              <div class="browser-dot green"></div>
+            </div>
+            <div class="browser-address-bar">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <span id="browser-url-text">https://apexgear.io/explore</span>
+            </div>
+          </div>
+
+          <!-- Dynamic Website Content Injected Here -->
+          <div class="fake-website-viewport" id="generated-website-container"></div>
+        </div>
+      </section>
+
+      <!-- ==================================================
+           VIEW 4: WEBSITE HIDDEN SCREEN
+           Requirement 4 & 5: Hidden view with "Your viewing time has ended." & "I'm Ready Now"
+           ================================================== -->
+      <section class="view-section" id="view-test-hidden">
+        <div class="hidden-screen-card">
+          <div class="hidden-icon-glow">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+              <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+              <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+              <line x1="2" y1="2" x2="22" y2="22"></line>
+            </svg>
+          </div>
+          <h2 class="hidden-title">Website Hidden</h2>
+          <p class="hidden-desc" style="font-size: 1.15rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem;">
+            Your viewing time has ended.
+          </p>
+          <p class="hidden-desc" style="font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 1.75rem;">
+            Take a moment to collect your thoughts. When you are ready to answer the questions based on the website you just studied, click below.
+          </p>
+          <button class="btn btn-primary" id="btn-ready-now" style="font-size: 1.05rem; padding: 0.85rem 2.25rem;" onclick="handleReadyNowClick()">
+            <span>I'm Ready Now</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- ==================================================
+           VIEW 5: MEMORY QUESTIONS
+           ================================================== -->
+      <section class="view-section" id="view-test-questions">
+        <div class="questions-header-card">
+          <div class="questions-header-top">
+            <h2 class="section-title" style="margin-bottom:0; font-size: 1.5rem;">Visual & Spatial Questions</h2>
+            <span class="questions-progress-text tabular-nums" id="questions-progress-num">0 of 8 answered</span>
+          </div>
+          <div class="questions-progress-bar-wrap">
+            <div class="questions-progress-fill" id="questions-progress-bar-fill"></div>
+          </div>
+        </div>
+
+        <!-- Dynamic Questions List -->
+        <div class="questions-list" id="questions-list-container"></div>
+
+        <div class="submit-questions-wrap">
+          <button class="btn btn-primary" style="padding: 1rem 2.5rem; font-size: 1.05rem;" onclick="submitAnswers()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Submit Answers & View Recall Score</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ==================================================
+           VIEW 6: TEST RESULTS, SCORE & MEMORY REPLAY
+           ================================================== -->
+      <section class="view-section" id="view-test-results">
+        <div class="section-header" style="margin-top: 1rem;">
+          <h2 class="section-title">Test Results & Recall Analysis</h2>
+          <p class="section-desc">Detailed accuracy evaluation across visual, content, and spatial dimensions.</p>
+        </div>
+
+        <!-- Score Dashboard Card -->
+        <div class="score-dashboard-card">
+          <div class="score-circle-panel">
+            <div class="score-ring-svg-wrap">
+              <svg class="score-ring-svg">
+                <circle class="score-ring-bg" cx="85" cy="85" r="70"></circle>
+                <circle class="score-ring-progress" id="results-score-ring" cx="85" cy="85" r="70"></circle>
+              </svg>
+              <div class="score-ring-center">
+                <div class="score-number-big tabular-nums" id="results-score-number">0%</div>
+                <div class="score-label-small">Your Recall</div>
+              </div>
+            </div>
+            <div class="tier-badge exceptional" id="results-tier-badge">Strong Recall</div>
+          </div>
+
+          <div class="score-breakdown-panel">
+            <h3 class="score-panel-title">Cognitive Performance</h3>
+            <p id="results-feedback-text" style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5;">
+              You remembered major interface zones, hero texts, and primary accents accurately.
+            </p>
+            <div id="results-categories-wrap" style="display: flex; flex-direction: column; gap: 1rem;"></div>
+          </div>
+        </div>
+
+        <!-- Answers vs Correct Answers Comparison Table -->
+        <div class="comparison-section">
+          <div class="section-header" style="text-align: left; margin: 2rem 0 1rem;">
+            <h3 class="section-title" style="font-size: 1.4rem;">Your Answers vs Correct Answers</h3>
+            <p class="section-desc">Review your individual responses against the ground truth website data.</p>
+          </div>
+
+          <div class="comparison-table-wrap">
+            <table class="comparison-table">
+              <thead>
+                <tr>
+                  <th>Question</th>
+                  <th>Category</th>
+                  <th>Your Answer</th>
+                  <th>Correct Answer</th>
+                  <th>Result</th>
+                </tr>
+              </thead>
+              <tbody id="results-table-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Reveal Original Website Section -->
+        <div class="reveal-website-section">
+          <div class="section-header" style="text-align: left; margin: 3rem 0 1rem;">
+            <h3 class="section-title" style="font-size: 1.4rem;">Revealed Website with Feedback Overlays</h3>
+            <p class="section-desc">The original website rendered with real-time visual recollection markers.</p>
+          </div>
+
+          <div class="highlight-legend">
+            <div class="legend-item">
+              <div class="legend-box cyan"></div>
+              <span>Electric Cyan: Accurately remembered element</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-box red"></div>
+              <span>Coral Red: Misremembered or missed element</span>
+            </div>
+          </div>
+
+          <div class="browser-mockup">
+            <div class="browser-header">
+              <div class="browser-dots">
+                <div class="browser-dot red"></div>
+                <div class="browser-dot yellow"></div>
+                <div class="browser-dot green"></div>
+              </div>
+              <div class="browser-address-bar">
+                <span>Original Verified Snapshot</span>
+              </div>
+            </div>
+            <div class="fake-website-viewport" id="revealed-website-container"></div>
+          </div>
+        </div>
+
+        <!-- Memory Replay (3 Panels) -->
+        <div class="replay-container">
+          <div class="section-header" style="text-align: left; margin: 3.5rem 0 1rem;">
+            <h3 class="section-title" style="font-size: 1.4rem;">Memory Replay: Original vs Your Perception</h3>
+            <p class="section-desc">Side-by-side reconstruction comparing what existed vs what you reconstructed in memory.</p>
+          </div>
+
+          <div class="replay-grid">
+            <!-- Panel 1: Original -->
+            <div class="replay-panel">
+              <div class="replay-panel-header cyan-head">
+                <span>ORIGINAL WEBSITE</span>
+                <span>Verified Ground Truth</span>
+              </div>
+              <div class="replay-viewport-mini" id="replay-original-container"></div>
+            </div>
+
+            <!-- Panel 2: Your Memory Reconstruction -->
+            <div class="replay-panel">
+              <div class="replay-panel-header purple-head">
+                <span>YOUR MEMORY RECONSTRUCTION</span>
+                <span>Based on Your Answers</span>
+              </div>
+              <div class="replay-viewport-mini" id="replay-user-container"></div>
+            </div>
+          </div>
+
+          <!-- Differences Breakdown Panel -->
+          <div class="differences-summary-card">
+            <h4 style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary);">Differences & Recall Discrepancies</h4>
+            <div class="diff-items-list" id="replay-diff-list"></div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 3.5rem; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="navigateToView('tests')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            <span>Take Next Test</span>
+          </button>
+          <button class="btn btn-secondary" onclick="navigateToView('progress')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+            <span>View Progress History</span>
+          </button>
+          <button class="btn btn-secondary" onclick="navigateToView('home')">
+            <span>Back to Home</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ==================================================
+           VIEW 7: THEMES PAGE
+           ================================================== -->
+      <section class="view-section" id="view-themes">
+        <div class="section-header">
+          <h2 class="section-title">Website Theme Catalog</h2>
+          <p class="section-desc">Select any specific industry category to isolate and train focused memory patterns.</p>
+        </div>
+
+        <div class="themes-grid">
+          <!-- E-commerce -->
+          <div class="theme-card">
+            <div class="theme-preview-box">
+              <svg width="160" height="100" viewBox="0 0 220 180" fill="none">
+                <rect x="40" y="30" width="140" height="120" rx="16" fill="rgba(255,255,255,0.03)" stroke="#00E5FF" stroke-width="2"/>
+                <circle cx="110" cy="75" r="32" fill="#00E5FF" fill-opacity="0.15" stroke="#00E5FF" stroke-width="2"/>
+                <path d="M100 70 L110 82 L125 66" stroke="#00E5FF" stroke-width="3" stroke-linecap="round"/>
+                <rect x="65" y="120" width="90" height="10" rx="5" fill="#00E5FF" fill-opacity="0.3"/>
+              </svg>
+            </div>
+            <div class="theme-card-body">
+              <h3 class="theme-card-title">E-commerce</h3>
+              <p class="theme-card-desc">Tests recall of high-conversion product titles, warranty pills, add-to-cart badges, and price highlights.</p>
+              <button class="btn btn-primary btn-sm" onclick="practiceSpecificTheme('ecommerce')">Practice E-commerce</button>
+            </div>
+          </div>
+
+          <!-- Travel -->
+          <div class="theme-card">
+            <div class="theme-preview-box">
+              <svg width="160" height="100" viewBox="0 0 220 180" fill="none">
+                <circle cx="110" cy="90" r="60" fill="rgba(255,255,255,0.02)" stroke="#7C3AED" stroke-width="1.5" stroke-dasharray="4 4"/>
+                <path d="M60 135 L95 85 L120 115 L145 75 L175 135 Z" fill="#7C3AED" fill-opacity="0.25" stroke="#7C3AED" stroke-width="2"/>
+                <circle cx="155" cy="55" r="14" fill="#F59E0B" fill-opacity="0.7"/>
+              </svg>
+            </div>
+            <div class="theme-card-body">
+              <h3 class="theme-card-title">Travel</h3>
+              <p class="theme-card-desc">Tests wilderness itineraries, alpine guide listings, sunset vectors, and expedition bookings.</p>
+              <button class="btn btn-primary btn-sm" onclick="practiceSpecificTheme('travel')">Practice Travel</button>
+            </div>
+          </div>
+
+          <!-- Portfolio -->
+          <div class="theme-card">
+            <div class="theme-preview-box">
+              <svg width="160" height="100" viewBox="0 0 220 180" fill="none">
+                <rect x="35" y="25" width="90" height="80" rx="12" fill="#00E5FF" fill-opacity="0.2" stroke="#00E5FF" stroke-width="2"/>
+                <rect x="95" y="70" width="90" height="80" rx="12" fill="#7C3AED" fill-opacity="0.25" stroke="#A78BFA" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="theme-card-body">
+              <h3 class="theme-card-title">Portfolio</h3>
+              <p class="theme-card-desc">Tests spatial alignments, typography hierarchy, studio case study links, and client logos.</p>
+              <button class="btn btn-primary btn-sm" onclick="practiceSpecificTheme('portfolio')">Practice Portfolio</button>
+            </div>
+          </div>
+
+          <!-- Food -->
+          <div class="theme-card">
+            <div class="theme-preview-box">
+              <svg width="160" height="100" viewBox="0 0 220 180" fill="none">
+                <circle cx="110" cy="90" r="55" fill="rgba(255,255,255,0.04)" stroke="#22C55E" stroke-width="2"/>
+                <circle cx="110" cy="90" r="10" fill="#F59E0B"/>
+              </svg>
+            </div>
+            <div class="theme-card-body">
+              <h3 class="theme-card-title">Food & Culinary</h3>
+              <p class="theme-card-desc">Tests organic harvest descriptions, wine pairings, reservation buttons, and seasonal menus.</p>
+              <button class="btn btn-primary btn-sm" onclick="practiceSpecificTheme('food')">Practice Food</button>
+            </div>
+          </div>
+
+          <!-- Dashboard -->
+          <div class="theme-card">
+            <div class="theme-preview-box">
+              <svg width="160" height="100" viewBox="0 0 220 180" fill="none">
+                <rect x="30" y="30" width="160" height="120" rx="10" fill="rgba(0,0,0,0.3)" stroke="#00E5FF" stroke-width="1.5"/>
+                <path d="M45 120 L75 95 L105 105 L135 70 L165 85" stroke="#00E5FF" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="theme-card-body">
+              <h3 class="theme-card-title">SaaS Dashboard</h3>
+              <p class="theme-card-desc">Tests observability graphs, telemetry metrics, multi-cluster statuses, and latency stats.</p>
+              <button class="btn btn-primary btn-sm" onclick="practiceSpecificTheme('dashboard')">Practice Dashboard</button>
+            </div>
+          </div>
+
+          <!-- Education -->
+          <div class="theme-card">
+            <div class="theme-preview-box">
+              <svg width="160" height="100" viewBox="0 0 220 180" fill="none">
+                <path d="M110 40 L175 75 L110 110 L45 75 Z" fill="#7C3AED" fill-opacity="0.25" stroke="#7C3AED" stroke-width="2"/>
+                <path d="M70 90 V125 C70 140 150 140 150 125 V90" stroke="#7C3AED" stroke-width="2" fill="none"/>
+              </svg>
+            </div>
+            <div class="theme-card-body">
+              <h3 class="theme-card-title">Education</h3>
+              <p class="theme-card-desc">Tests STEM simulation titles, syllabus modules, cohort dates, and interactive labs.</p>
+              <button class="btn btn-primary btn-sm" onclick="practiceSpecificTheme('education')">Practice Education</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================
+           VIEW 8: ADVANCED MODES PAGE
+           ================================================== -->
+      <section class="view-section" id="view-modes">
+        <div class="section-header">
+          <h2 class="section-title">Advanced Memory Modes</h2>
+          <p class="section-desc">Interactive exercises targeting difference detection, element sequencing, and attention.</p>
+        </div>
+
+        <div class="modes-grid">
+          <div class="mode-card">
+            <div class="mode-card-header">
+              <div class="mode-card-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v1"></path><path d="M18 8h4a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-4"></path><circle cx="8" cy="12" r="2"></circle><circle cx="20" cy="12" r="2"></circle></svg>
+              </div>
+              <h3 class="mode-card-title">Spot the Difference</h3>
+            </div>
+            <p class="mode-card-desc">Inspect two website variations side by side and detect which specific component was modified.</p>
+            <button class="btn btn-primary btn-sm" onclick="startDifferenceMode()">Play Mode Now</button>
+          </div>
+
+          <div class="mode-card">
+            <div class="mode-card-header">
+              <div class="mode-card-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+              </div>
+              <h3 class="mode-card-title">Sequence Memory</h3>
+            </div>
+            <p class="mode-card-desc">A progressive Simon-Says style UI memory game. Remember the exact sequence of flashing interface elements.</p>
+            <button class="btn btn-primary btn-sm" onclick="startSequenceMode()">Play Mode Now</button>
+          </div>
+
+          <div class="mode-card">
+            <div class="mode-card-header">
+              <div class="mode-card-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+              </div>
+              <h3 class="mode-card-title">Attention Challenge</h3>
+            </div>
+            <p class="mode-card-desc">Rapid 5s test focusing on detecting subtle anomalies, missing items, or introduced badges.</p>
+            <button class="btn btn-primary btn-sm" onclick="startAttentionMode()">Play Mode Now</button>
+          </div>
+
+          <div class="mode-card">
+            <div class="mode-card-header">
+              <div class="mode-card-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+              </div>
+              <h3 class="mode-card-title">Visual + Content Dual Test</h3>
+            </div>
+            <p class="mode-card-desc">Full spectrum memory examination covering colors, button copy, card shapes, and spatial alignments.</p>
+            <button class="btn btn-primary btn-sm" onclick="navigateToView('tests')">Play Mode Now</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================
+           VIEW 9: PROGRESS SYSTEM & RECENT HISTORY
+           Requirement 8 & 9: Progress system with functioning Clear History
+           ================================================== -->
+      <section class="view-section" id="view-progress">
+        <div class="section-header">
+          <h2 class="section-title">Performance & Progress Tracking</h2>
+          <p class="section-desc">Historical metrics, retention trends, and test archives stored securely in browser storage.</p>
+        </div>
+
+        <div class="progress-stats-grid">
+          <div class="progress-stat-card">
+            <span class="pstat-label">Total Tests Completed</span>
+            <span class="pstat-val tabular-nums" id="prog-total-tests">0</span>
+          </div>
+          <div class="progress-stat-card">
+            <span class="pstat-label">Personal Best Score</span>
+            <span class="pstat-val tabular-nums" id="prog-best-score">0%</span>
+          </div>
+          <div class="progress-stat-card">
+            <span class="pstat-label">Average Recall Rate</span>
+            <span class="pstat-val tabular-nums" id="prog-avg-score">0%</span>
+          </div>
+          <div class="progress-stat-card">
+            <span class="pstat-label">Storage Engine</span>
+            <span class="pstat-val" style="font-size: 1.4rem; color: var(--primary);">Client LocalStorage</span>
+          </div>
+        </div>
+
+        <!-- History Table -->
+        <div class="history-card">
+          <div class="history-header">
+            <h3 style="font-size: 1.2rem; font-weight: 800;">Recent Completed Tests</h3>
+            <!-- Requirement 8: Working Clear History button opening confirmation modal -->
+            <button class="btn btn-secondary btn-sm" onclick="openClearHistoryModal()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              <span>Clear History</span>
+            </button>
+          </div>
+          <div class="history-table-wrap">
+            <table class="history-table">
+              <thead>
+                <tr>
+                  <th>Theme</th>
+                  <th>Difficulty</th>
+                  <th>Score</th>
+                  <th>Questions</th>
+                  <th>Date & Time</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="prog-history-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ==================================================
+         MODALS
+         ================================================== -->
+    <!-- Requirement 8: Clear Test History Confirmation Modal -->
+    <div class="modal-overlay" id="clear-history-modal">
+      <div class="modal-box" style="max-width: 460px;">
+        <button class="modal-close-btn" onclick="closeModal('clear-history-modal')">✕</button>
+        <div style="width: 50px; height: 50px; border-radius: 12px; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); display: flex; align-items: center; justify-content: center; color: var(--error); margin-bottom: 1.25rem;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            <line x1="10" y1="11" x2="10" y2="17"></line>
+            <line x1="14" y1="11" x2="14" y2="17"></line>
+          </svg>
+        </div>
+        <h3 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 0.65rem; color: var(--text-primary);">Clear Test History?</h3>
+        <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.55; margin-bottom: 1.75rem;">
+          This will permanently remove your saved WebMemory test history and progress statistics from this browser.
+        </p>
+        <div style="display: flex; gap: 0.85rem; justify-content: flex-end;">
+          <button class="btn btn-secondary btn-sm" onclick="closeModal('clear-history-modal')">Cancel</button>
+          <button class="btn btn-primary btn-sm" style="background: #EF4444; border-color: #EF4444; color: #FFFFFF; box-shadow: 0 0 20px rgba(239, 68, 68, 0.35);" onclick="executeClearHistory()">Clear History</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spot the Difference Modal -->
+    <div class="modal-overlay" id="diff-mode-modal">
+      <div class="modal-box diff-modal-box">
+        <div class="diff-modal-header">
+          <div>
+            <h3 class="diff-modal-title">Spot the Difference</h3>
+            <p class="diff-modal-subtitle">
+              Find all 5 differences between the Original and Changed website previews.
+            </p>
+          </div>
+          <button class="modal-close-btn" onclick="closeModal('diff-mode-modal')">✕</button>
+        </div>
+
+        <!-- Status & Score Bar -->
+        <div class="diff-status-bar">
+          <div class="diff-status-counter-wrap">
+            <span class="diff-counter-label">Differences Found:</span>
+            <span class="tabular-nums" id="diff-found-counter">0 / 5</span>
+          </div>
+          <div id="diff-feedback-banner">
+            Click directly on any difference you spot
+          </div>
+        </div>
+        
+        <!-- Previews Grid -->
+        <div class="diff-previews-grid">
+          <div class="diff-preview-wrapper">
+            <div class="diff-preview-header original-header">
+              <span>Original</span>
+              <span class="diff-preview-tag">Reference Layout</span>
+            </div>
+            <div id="diff-site-a" class="diff-site-container" onclick="handleDiffPreviewClick(event, 'a')"></div>
+          </div>
+          <div class="diff-preview-wrapper">
+            <div class="diff-preview-header changed-header">
+              <span>Changed</span>
+              <span class="diff-preview-tag">5 Intentional Differences</span>
+            </div>
+            <div id="diff-site-b" class="diff-site-container" onclick="handleDiffPreviewClick(event, 'b')"></div>
+          </div>
+        </div>
+
+        <div id="diff-completion-actions">
+          <button class="btn btn-secondary btn-sm" id="btn-diff-try-again" onclick="startDifferenceMode()">Try Again</button>
+          <button class="btn btn-secondary btn-sm" onclick="closeDiffModeModal()">Back to Advanced Modes</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sequence Memory Modal -->
+    <div class="modal-overlay" id="sequence-mode-modal">
+      <div class="modal-box sequence-modal-box">
+        <button class="modal-close-btn" onclick="closeModal('sequence-mode-modal')">✕</button>
+        <h3 class="sequence-modal-title">Sequence Memory Game</h3>
+        <p class="sequence-modal-subtitle">
+          Memorize the flashing sequence, then click the UI components in the exact same order!
+        </p>
+        <div class="sequence-level-indicator">
+          Level: <span id="sequence-level-num">1</span>
+        </div>
+        <div id="sequence-status-msg">
+          Watch the sequence...
+        </div>
+
+        <div class="sequence-grid">
+          <div class="sequence-tile" id="seq-tile-logo" onclick="handleSequenceTileClick('logo')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline></svg>
+            <span>Logo</span>
+          </div>
+          <div class="sequence-tile" id="seq-tile-nav" onclick="handleSequenceTileClick('nav')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            <span>Nav Links</span>
+          </div>
+          <div class="sequence-tile" id="seq-tile-hero" onclick="handleSequenceTileClick('hero')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line></svg>
+            <span>Hero Text</span>
+          </div>
+          <div class="sequence-tile" id="seq-tile-cta" onclick="handleSequenceTileClick('cta')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            <span>Primary CTA</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 1.5rem; display: flex; gap: 0.75rem; justify-content: center;">
+          <button class="btn btn-secondary btn-sm" id="btn-restart-sequence" onclick="restartSequenceRound()">Restart Sequence</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settings-modal">
+      <div class="modal-box">
+        <button class="modal-close-btn" onclick="closeModal('settings-modal')">✕</button>
+        <h3 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 0.5rem;">Settings & Preferences</h3>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.75rem;">
+          Configure visual display, theme preferences, and sound feedback.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-weight: 700;">Sound Effects & Audio Cues</div>
+              <div style="font-size: 0.82rem; color: var(--text-secondary);">Synthesized feedback on clicks & timers</div>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="toggleSound()">Toggle Sound</button>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-weight: 700;">Visual Color Scheme</div>
+              <div style="font-size: 0.82rem; color: var(--text-secondary);">Toggle between Electric Cyan Dark and Slate Light</div>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="toggleTheme()">Switch Theme</button>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 1.25rem;">
+            <div>
+              <div style="font-weight: 700; color: var(--error);">Reset Data</div>
+              <div style="font-size: 0.82rem; color: var(--text-secondary);">Erase all saved scores and test history</div>
+            </div>
+            <button class="btn btn-secondary btn-sm" style="color: var(--error); border-color: rgba(239,68,68,0.3);" onclick="closeModal('settings-modal'); openClearHistoryModal();">Clear Data</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container"></div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-content">
+        <div>
+          <strong>WebMemory</strong> · Interactive Visual Cognition & Website Memory Testing Platform
+        </div>
+      </div>
+    </footer>
+
+    <!-- Vanilla JavaScript Core Script -->
+    <script type="module" src="/script.js"></script>
+  </body>
+</html>
